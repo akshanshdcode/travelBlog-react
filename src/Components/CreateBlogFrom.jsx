@@ -3,6 +3,10 @@ import Style from "./CreateBlogForm.module.css"
 // import Style from './CreateBlogForm.module.css'
 import {Input,Button,Heading} from "@chakra-ui/react"
 import {Link} from "react-router-dom"
+import Filter from 'bad-words';
+
+const filter = new Filter();
+
 function CreateBlogFrom(props) {
     let [Title,SetTitle] = useState("");
     let [Subtitle,SetSubtitle] = useState("");
@@ -15,29 +19,37 @@ function CreateBlogFrom(props) {
        
     },[]);
 
-    let AddBlog = (event)=>{
+    let AddBlog = (event) => {
         event.preventDefault();
-        console.log(Title,Subtitle,Content,Image)
-        let new_blog={
-            Title,
-            Subtitle,
-            Content,
-            Image
-        }
-        fetch("https://tame-gold-cormorant-robe.cyclic.app/blogs",{
-            method:"POST",
-            body:JSON.stringify(new_blog),
-            headers:{
-                "Content-type":"application/json",
-                "authorization":`Bearer ${Token}`
+        const filteredContent = filter.clean(Content); // Filter inappropriate words
+    
+        if (Content !== filteredContent) {
+            // Content contains inappropriate words
+            alert("Your blog contains inappropriate words. Please remove them.");
+        } else {
+            // Content is clean, proceed with submission
+            console.log(Title, Subtitle, Content, Image)
+            let new_blog = {
+                Title: filteredContent, // Use the filtered content
+                Subtitle: filteredContent, // Use the filtered content
+                Content: filteredContent, // Use the filtered content
+                Image
             }
-        }).then((response)=>{
-            return response.json();
-        }).then((response)=>{
-            alert(response.Message);
-        }).catch((error)=>{
-            console.log(error);
-        })
+            fetch("https://tame-gold-cormorant-robe.cyclic.app/blogs", {
+                method: "POST",
+                body: JSON.stringify(new_blog),
+                headers: {
+                    "Content-type": "application/json",
+                    "authorization": `Bearer ${Token}`
+                }
+            }).then((response) => {
+                return response.json();
+            }).then((response) => {
+                alert(response.Message);
+            }).catch((error) => {
+                console.log(error);
+            })
+        }
     }
 
     return (
