@@ -21,7 +21,7 @@ function CreateBlogFrom(props) {
 
     let AddBlog = (event) => {
         event.preventDefault();
-        const filteredContent = filter.clean(Content); // Filter inappropriate words
+        const filteredContent = filter.clean(Content); // Filter inappropriate word
     
         if (Content !== filteredContent) {
             // Content contains inappropriate words
